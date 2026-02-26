@@ -3,18 +3,25 @@ import NoteModal from './components/NoteModal';
 import styles from './App.module.css';
 import './fonts.css';
 
+const generateId = () => crypto.randomUUID();
+
 // Изначальная заметка
 const DEFAULT_NOTE = {
-  id: Date.now(), // Для уникальности
+  id: generateId(), // Для уникальности
   text: 'Новая заметка',
 };
 
 function App() {
   // Получаем изначальные заметки, если есть в localStorage (если нет - располагаем только изначальную)
   const getInitialNotes = () => {
-    const saved = localStorage.getItem('notes');
-    const parsed = saved ? JSON.parse(saved) : [];
-    return parsed.length ? parsed : [DEFAULT_NOTE];
+    try {
+      const saved = localStorage.getItem('notes');
+      const parsed = saved ? JSON.parse(saved) : [];
+      return parsed.length ? parsed : [DEFAULT_NOTE];
+    } catch (err) {
+      console.error('Ошибка чтения localStorage:', err);
+      return [DEFAULT_NOTE];
+    }
   };
 
   const initialNotes = getInitialNotes();
@@ -24,7 +31,11 @@ function App() {
 
   // При изменении notes добавляем в localStorage
   useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes));
+    try {
+      localStorage.setItem('notes', JSON.stringify(notes));
+    } catch (err) {
+      console.error('Ошибка записи в localStorage:', err);
+    }
   }, [notes]);
 
   const activeNote = notes.find((note) => note.id === activeNoteId);
@@ -32,20 +43,18 @@ function App() {
   // Создание заметки
   const createNote = () => {
     const newNote = {
-      id: Date.now(),
+      id: generateId(),
       text: 'Новая заметка',
     };
 
-    setNotes([newNote, ...notes]); // Обновляем notes
+    setNotes((prev) => [newNote, ...prev]); // Обновляем notes
     setActiveNoteId(newNote.id); // Обновляем activeNoteId
   };
 
   // Обновление заметки
   const updateNote = (text) => {
-    setNotes(
-      notes.map((note) =>
-        note.id === activeNoteId ? { ...note, text } : note,
-      ),
+    setNotes((prev) =>
+      prev.map((note) => (note.id === activeNoteId ? { ...note, text } : note)),
     );
   };
 

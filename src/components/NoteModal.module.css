@@ -46,3 +46,35 @@
   border-radius: 8px;
   padding: 20px;
 }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.actions button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.actions button:first-child {
+  background: #eee;
+}
+
+.actions button:first-child:hover {
+  background: #cccccc;
+}
+
+.actions button:last-child {
+  background: #4f8cff;
+  color: white;
+}
+
+.actions button:last-child:hover {
+  background: #2e74f7;
+  color: white;
+}
